@@ -7,7 +7,7 @@
 - Repo nhóm: `K5-L3B-DAY03-CR7-ResearchAgentToolEval` (xem [SUBMISSION.md](SUBMISSION.md))
 - URL repo: https://github.com/NgoHai0804/K5-L3B-DAY03-CR7-ResearchAgentToolEval
 - Nhánh nộp: `main`
-- Commit chốt: `<điền sau khi commit chốt>`
+- Commit chốt: `1500ababee6221b135e4ec7ee689bad1da2ce524` (nhánh `main`)
 - Provider / model dùng cho mọi run: OpenRouter, `openai/gpt-4o-mini`
 - Artifact chốt: `v3+p219df60019b8+t5c1aa1b29a85` (xem B1 trong [group report](report/team/group_report.md))
 
