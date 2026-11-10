@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 03 Lab v2 — Research Agent (Team CR7)</title>
+<style>
+  :root{--ink:#0f172a;--muted:#475569;--line:#cbd5e1;--accent:#1d4ed8;--chip:#dbeafe;--chipink:#1e3a8a;--new:#dcfce7;--newink:#166534;--bg:#f8fafc;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,Arial,sans-serif;}
+  .poster{max-width:1080px;margin:0 auto;background:#fff;padding:40px 46px;}
+  header{border-bottom:3px solid var(--accent);padding-bottom:16px;margin-bottom:22px;}
+  h1{margin:0;font-size:30px;letter-spacing:-.3px;}
+  .sub{color:var(--muted);margin-top:6px;font-size:14px;}
+  h2{font-size:17px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin:26px 0 10px;}
+  p{margin:8px 0;}
+  .link{display:inline-block;margin-top:6px;background:var(--chip);color:var(--chipink);padding:8px 12px;border-radius:8px;font-weight:600;word-break:break-all;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top;}
+  th{background:#eef2ff;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:#3730a3;}
+  code{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:1px 5px;font-size:12.5px;}
+  .chip{display:inline-block;background:var(--chip);color:var(--chipink);border-radius:999px;padding:1px 9px;font-size:11.5px;font-weight:600;}
+  .chip.new{background:var(--new);color:var(--newink);}
+  ol.items{margin:8px 0;padding-left:22px;}
+  ol.items li{margin:6px 0;}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 26px;}
+  footer{margin-top:26px;padding-top:12px;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;}
+</style>
+</head>
+<body>
+<div class="poster">
+  <header>
+    <h1>Research Agent — Team CR7</h1>
+    <div class="sub">Day 03 Lab v2 · Prompt · Function Calling · Tool Design · MCP &nbsp;|&nbsp; Provider: OpenRouter · <code>openai/gpt-4o-mini</code> · 14 tool · 4 tool mới</div>
+  </header>
+
+  <h2>A1 · Agent này làm được gì</h2>
+  <p>Research agent bằng tiếng Việt: tìm tin tức trên web, đọc tweet theo tài khoản hoặc theo chủ đề, đọc nội dung URL, tra Wikipedia, xem thông tin repo GitHub và model trên Hugging Face, tìm và đọc paper arXiv, tra policy nội bộ, xếp hạng / bỏ trùng kết quả, gom thành bản tin markdown và đăng lên Telegram <strong>chỉ sau khi người dùng xác nhận</strong>. Thiếu thông tin thì hỏi lại, không đoán; câu hỏi ngoài phạm vi (toán, code, chuyện phiếm) thì từ chối, không gọi tool.</p>
+  <p><strong>Link dùng thử:</strong></p>
+  <span class="link">https://survivors-muscles-robots-expired.trycloudflare.com</span>
+
+  <h2>A2 · Tool agent có</h2>
+  <table>
+    <thead><tr><th style="width:160px">Tên tool</th><th>Làm được gì</th><th style="width:120px">Tool mới?</th></tr></thead>
+    <tbody>
+      <tr><td><code>clarify</code></td><td>Hỏi lại người dùng khi thiếu thông tin, hoặc xin xác nhận yes/no trước khi gửi</td><td><span class="chip">không</span></td></tr>
+      <tr><td><code>timeline</code></td><td>Lấy tweet gần đây của một tài khoản (handle không có <code>@</code>)</td><td><span class="chip">không</span></td></tr>
+      <tr><td><code>social_search</code></td><td>Tìm tweet theo chủ đề (<code>Top</code> / <code>Latest</code>)</td><td><span class="chip">không</span></td></tr>
+      <tr><td><code>lookup</code></td><td>Tìm web (Tavily), <code>topic=news</code> + <code>timeframe</code> day/week/month/year cho tin tức</td><td><span class="chip">không</span></td></tr>
+      <tr><td><code>fetch</code></td><td>Đọc nội dung một URL (Firecrawl)</td><td><span class="chip">không</span></td></tr>
+      <tr><td><code>format</code></td><td>Trình bày các item đã có thành digest markdown</td><td><span class="chip">không</span></td></tr>
+      <tr><td><code>send</code></td><td>Đăng text lên Telegram, chỉ khi <code>confirmed=true</code></td><td><span class="chip">bonus</span></td></tr>
+      <tr><td><code>policy</code></td><td>Tra policy công ty trong markdown nội bộ</td><td><span class="chip">bonus</span></td></tr>
+      <tr><td><code>papers</code></td><td>Tìm paper trên arXiv</td><td><span class="chip">bonus</span></td></tr>
+      <tr><td><code>paper_text</code></td><td>Tải PDF arXiv và trích text</td><td><span class="chip">bonus</span></td></tr>
+      <tr><td><code>rank_items</code></td><td>Bỏ trùng + xếp hạng item đã có (mới nhất / điểm cao / liên quan), lấy top N</td><td><span class="chip new">có</span></td></tr>
+      <tr><td><code>wiki</code></td><td>Tra kiến thức nền trên Wikipedia ("X là gì", "Y là ai")</td><td><span class="chip new">có</span></td></tr>
+      <tr><td><code>github_repo</code></td><td>Star, fork, issue, license, lần push cuối, archived của một repo GitHub</td><td><span class="chip new">có</span></td></tr>
+      <tr><td><code>hf_models</code></td><td>Tìm model open-weight trên Hugging Face theo task; downloads, likes, license</td><td><span class="chip new">có</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>A3 · Câu hỏi mẫu để thử</h2>
+  <ol class="items">
+    <li>"Tin AI hôm nay có gì nổi bật?" → <code>lookup(topic=news, timeframe=day)</code></li>
+    <li>"Repo ollama/ollama bao nhiêu star và còn được maintain không?" → <code>github_repo</code> (một lần gọi)</li>
+    <li>"Trên Hugging Face, model speech-to-text nào được tải nhiều nhất?" → <code>hf_models(task=automatic-speech-recognition)</code></li>
+    <li>"Tóm tắt 5 tweet mới nhất" → agent hỏi lại tài khoản nào → "Của Andrej Karpathy" → <code>timeline(screenname=karpathy, limit=5)</code></li>
+    <li>"Đăng bản tin này lên Telegram giúp mình" → agent xin xác nhận yes/no, chưa gửi</li>
+  </ol>
+
+  <footer>
+    Kết quả: base 20/20 · extension 10/10 · group (14 case nhóm) 14/14 · <code>pytest</code> 164 passed, 0 skipped.
+    &nbsp;|&nbsp; Artifact chốt: <code>v3+p219df60019b8+t5c1aa1b29a85</code>.
+  </footer>
+</div>
+</body>
+</html>

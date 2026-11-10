@@ -29,7 +29,7 @@ Research agent bằng tiếng Việt: tìm tin tức trên web, đọc tweet the
 
 > Chạy `streamlit run app.py` rồi `cloudflared tunnel --url http://localhost:8501`.
 >
-> URL: _(chưa có: điền link `https://<random>.trycloudflare.com` khi mở tunnel)_
+> URL: https://survivors-muscles-robots-expired.trycloudflare.com _(Cloudflare quick tunnel, tạm thời — sống theo phiên lệnh `cloudflared`; link đổi mỗi lần mở lại tunnel)_
 
 ## A2. Tool agent có
 
@@ -94,6 +94,8 @@ Ghi chú: v0 được chạy 4 lần với cùng hash (0.65 / 0.65 / 0.70 / 0.70
 - `v3-rank_*` là run thử `rank_items` trước khi khai báo chính thức.
 - `v4_..._191236` có cùng artifact (`bbf9dc8a`) với run v3 trung gian của Đức, chỉ gắn nhãn khác.
 
+Bảng phân tích phẳng tất cả run: `analysis/base_runs.csv` (748 dòng), sinh bằng `python scripts/parse_runs.py runs/ --output analysis/base_runs.csv`.
+
 ## B2. Failure Analysis
 
 Lấy từ `results[*].result.failures`.
@@ -149,14 +151,16 @@ Transcript chính: `transcripts/v3_openrouter_20261110T194324903467.transcript.j
 
 Transcript cũ `v3_openrouter_20261110T185545472999.transcript.json` (artifact `v3+p15fc51fabfe3+t5762f79b954c`, trước khi merge 4 tool mới) được giữ lại. Trong đó, lượt `lookup(query=AI, topic=news, timeframe=day)` trả tin có nguồn.
 
+**Transcript end-to-end `send`:** `transcripts/v3_openrouter_20261110T215800069030.transcript.json`. Turn 1 ("Đăng lên Telegram giúp mình bản tin sau: …") → `clarify(response_type=yes_no)`, status `waiting_for_user`, **không** gọi `send`. Turn 2 ("Có, mình xác nhận đăng…") → `send({"text": …, "confirmed": true})` → `{"tool": "send_telegram", "status": "sent"}` (tin đã nhận trên Telegram). Đây là bằng chứng end-to-end cho guardrail confirmation.
+
 ## B5. Bonus Evidence
 
 | Bonus | Evidence File | What Worked | Risk / Guardrail |
 |---|---|---|---|
-| send (Telegram) | transcript turn 4; `plans/TASK-2-UI-Live-Chat.md` §6 | Agent xin `clarify(yes_no)` trước khi gửi; `send(confirmed=true)` gọi trực tiếp đã gửi thật thành công | `send` từ chối khi `confirmed=false`; prompt §0 ưu tiên xin xác nhận. Chưa có transcript end-to-end user "có" → `send` |
+| send (Telegram) | `transcripts/v3_openrouter_20261110T215800069030.transcript.json` (turn 1 `clarify(yes_no)` → turn 2 user "có" → `send(confirmed=true)` → `status: sent`) | Agent xin xác nhận trước rồi mới gửi; gửi thật thành công qua đúng code path `tools/send/tool.py:11` | `send` trả `needs_confirmation` khi `confirmed=false`; prompt §0 ưu tiên xin xác nhận |
 | arXiv/company policy | `runs/v3_B_extension_openrouter_20261110T191927196399.json` | `papers`, `paper_text`, `policy` đã khai báo, có test; extension 1.0 | Dòng kiểu "ra lệnh" trong policy được tách sang `untrusted_text` |
 | 4 tool mới (rank_items, wiki, github_repo, hf_models) | `tools/TEAM_TOOLS.md`, `plans/TASK-3-New-Tools.md`, `runs/v3_B_group_*` | Group 14/14; base không giảm (tool mới bị gọi 0 lần trong base) | GitHub không token: 60 req/giờ; lỗi HTTP trả error dict |
-| UI | `app.py` (Streamlit) | Chat multi-turn, hiện tool call + args + kết quả, sidebar artifact_version | Chưa có link public |
+| UI | `app.py` (Streamlit) | Chat multi-turn, hiện tool call + args + kết quả, sidebar artifact_version; link public https://survivors-muscles-robots-expired.trycloudflare.com | Link `trycloudflare` tạm thời, sống theo phiên `cloudflared` |
 | Tool unit tests (`tests/`) | `pytest` output | **164 passed, 0 failed, 0 skipped** | Test offline, HTTP bị chặn và mock |
 
 Tool unit tests: 46 hàm test (64 trường hợp tính cả `parametrize`) cho 4 tool mới (`rank_items` 14, `wiki` 10, `github_repo` 10, `hf_models` 12), cộng với các stub có sẵn đã điền đủ. Không tìm thấy bug trong tool có sẵn. Tìm và sửa 7 bug trong code tool mới (5 bug ở code mẫu `rank_items`, 1 ở `github_repo`, 1 ở mô tả `wiki`), mỗi bug code đều có regression test.
