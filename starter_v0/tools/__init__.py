@@ -17,8 +17,11 @@ from .policy.tool import search_company_policy
 from .social_search.tool import search_tweets
 from .send.tool import send_telegram
 from .lookup.tool import web_search
-# Team tool (v3)
+# Team tools (v3)
 from .rank_items.tool import rank_items
+from .wiki.tool import wiki_summary
+from .github_repo.tool import github_repo
+from .hf_models.tool import hf_models
 
 
 # NOTE (starter_v0): tool names here are intentionally vague. These keys are the
@@ -37,8 +40,11 @@ TOOL_FUNCTIONS = {
     "policy": search_company_policy,
     "papers": arxiv_search,
     "paper_text": get_arxiv_paper_text,
-    # Team tool (v3) - declared at the END of artifacts/tools.yaml
+    # Team tools (v3) - declared at the END of artifacts/tools.yaml
     "rank_items": rank_items,
+    "wiki": wiki_summary,
+    "github_repo": github_repo,
+    "hf_models": hf_models,
 }
 
 

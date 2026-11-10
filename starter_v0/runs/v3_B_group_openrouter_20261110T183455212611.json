@@ -1,0 +1,500 @@
+{
+  "run_id": "v3_B_group_openrouter_20261110T183455212611",
+  "version": "v3",
+  "artifact_version": "v3+p15fc51fabfe3+t6ae1946005b5",
+  "prompt_hash": "15fc51fabfe31dc02b9f19de01d4c987d52d6ecb627ad2d77bb4b4815169c65a",
+  "tools_hash": "6ae1946005b52222c9bc362a2b3aacd99f648cd179839509b094d2505afad903",
+  "phase": "B",
+  "suite": "group",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "D:\\VinAI\\K5-L3B-DAY03-CR7-ResearchAgentToolEval\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "D:\\VinAI\\K5-L3B-DAY03-CR7-ResearchAgentToolEval\\starter_v0\\artifacts\\tools.yaml",
+  "eval_cases": "data\\eval_group.json",
+  "dataset_id": "day04_v2_research_group",
+  "dataset_role": "group",
+  "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
+  "generated_at": "2026-11-10T18:34:55",
+  "summary": {
+    "total_cases": 4,
+    "measured_cases": 4,
+    "provider_error_cases": 0,
+    "passed_cases": 3,
+    "case_accuracy": 0.75,
+    "tool_routing_accuracy": 0.75,
+    "argument_accuracy": 0.75,
+    "multiturn_accuracy": null,
+    "failure_counts": {
+      "wrong_tool": 1
+    },
+    "observed_mismatch_counts": {
+      "extra_tool_call": 1
+    }
+  },
+  "results": [
+    {
+      "id": "G01_rank_items_dedupe_top",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_new_tool_rank_items",
+        "difficulty": "medium",
+        "new_tool": "rank_items",
+        "what_it_tests": "Đã CÓ sẵn items + yêu cầu bỏ trùng/top N theo điểm → rank_items(sort_by=score, top_k=2), không phải format (trình bày) và không lookup lại."
+      },
+      "input": "Đây là kết quả mình đã tìm được: [{\"title\": \"OpenAI ra mắt GPT-5\", \"url\": \"https://openai.com/blog/gpt-5\", \"score\": 7}, {\"title\": \"OpenAI ra mắt GPT-5\", \"url\": \"https://openai.com/blog/gpt-5/\", \"score\": 7}, {\"title\": \"Anthropic công bố Claude mới\", \"url\": \"https://anthropic.com/news\", \"score\": 9}, {\"title\": \"Google cập nhật Gemini\", \"url\": \"https://blog.google/gemini\", \"score\": 4}]. Bỏ bài trùng rồi giữ 2 bài có điểm cao nhất giúp mình.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "rank_items",
+            "args": {
+              "sort_by": "score",
+              "top_k": 2
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "rank_items",
+            "args": {
+              "items": [
+                {
+                  "title": "OpenAI ra mắt GPT-5",
+                  "url": "https://openai.com/blog/gpt-5",
+                  "score": 7
+                },
+                {
+                  "title": "OpenAI ra mắt GPT-5",
+                  "url": "https://openai.com/blog/gpt-5/",
+                  "score": 7
+                },
+                {
+                  "title": "Anthropic công bố Claude mới",
+                  "url": "https://anthropic.com/news",
+                  "score": 9
+                },
+                {
+                  "title": "Google cập nhật Gemini",
+                  "url": "https://blog.google/gemini",
+                  "score": 4
+                }
+              ],
+              "sort_by": "score",
+              "dedupe": true,
+              "top_k": 2
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "rank_items",
+          "args": {
+            "items": [
+              {
+                "title": "OpenAI ra mắt GPT-5",
+                "url": "https://openai.com/blog/gpt-5",
+                "score": 7
+              },
+              {
+                "title": "OpenAI ra mắt GPT-5",
+                "url": "https://openai.com/blog/gpt-5/",
+                "score": 7
+              },
+              {
+                "title": "Anthropic công bố Claude mới",
+                "url": "https://anthropic.com/news",
+                "score": 9
+              },
+              {
+                "title": "Google cập nhật Gemini",
+                "url": "https://blog.google/gemini",
+                "score": 4
+              }
+            ],
+            "sort_by": "score",
+            "dedupe": true,
+            "top_k": 2
+          },
+          "result": {
+            "tool": "rank_items",
+            "sort_by": "score",
+            "items": [
+              {
+                "title": "Anthropic công bố Claude mới",
+                "url": "https://anthropic.com/news",
+                "score": 9
+              },
+              {
+                "title": "OpenAI ra mắt GPT-5",
+                "url": "https://openai.com/blog/gpt-5",
+                "score": 7
+              }
+            ],
+            "count": 2,
+            "removed": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "G02_wiki_background_knowledge",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_new_tool_wiki",
+        "difficulty": "easy",
+        "new_tool": "wiki",
+        "what_it_tests": "Câu hỏi kiến thức nền ổn định ('X là gì') → wiki, không phải lookup tin tức hay papers."
+      },
+      "input": "Transformer trong deep learning là gì? Giải thích ngắn gọn giúp mình.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "wiki",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "wiki",
+            "args": {
+              "query": "Transformer deep learning",
+              "sentences": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "wiki",
+          "args": {
+            "query": "Transformer deep learning",
+            "sentences": 5
+          },
+          "result": {
+            "tool": "wiki_summary",
+            "query": "Transformer deep learning",
+            "lang": "en",
+            "found": true,
+            "items": [
+              {
+                "title": "Transformer (deep learning)",
+                "url": "https://en.wikipedia.org/wiki/Transformer_(deep_learning)",
+                "source": "en.wikipedia.org",
+                "summary": "In deep learning, the transformer is a family of artificial neural network architectures based on the multi-head attention mechanism, in which input data such as text, images, or audio is  converted to a sequence of numerical representations called tokens, and each token is converted into a vector through an embedding layer. At each layer, each token is then contextualized within the scope of the context window with other (unmasked) tokens via a parallel multi-head attention mechanism, allowing the signal for key tokens to be amplified and less important tokens to be diminished. Because self-attention alone is permutation-invariant, transformers inject positional information, typically through positional encodings or learned positional embeddings, so token order can affect the output.\nBecause transformers do not process tokens one at a time, their computations can be parallelized across sequence positions during training more readily than those of recurrent neural networks like long short-term memory (LSTM). Later variations have been widely adopted for training large language models (LLMs) on large (language) datasets.",
+                "is_disambiguation": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G03_github_repo_stars",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_new_tool_github_repo",
+        "difficulty": "easy",
+        "new_tool": "github_repo",
+        "what_it_tests": "Hỏi số star/hoạt động của một repo cụ thể → github_repo(repo='langchain-ai/langchain'), không fetch trang GitHub, không lookup web."
+      },
+      "input": "Repo langchain-ai/langchain trên GitHub hiện có bao nhiêu star và còn được maintain không?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "github_repo",
+            "args": {
+              "repo": "langchain-ai/langchain"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": false,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "github_repo",
+            "args": {
+              "repo": "langchain-ai/langchain"
+            }
+          },
+          {
+            "name": "github_repo",
+            "args": {
+              "repo": "langchain-ai/langchain"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "extra_tool_call",
+        "failure_type": "wrong_tool",
+        "failures": [
+          "extra tool call github_repo"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "github_repo",
+          "args": {
+            "repo": "langchain-ai/langchain"
+          },
+          "result": {
+            "tool": "github_repo",
+            "repo": "langchain-ai/langchain",
+            "found": true,
+            "items": [
+              {
+                "title": "langchain-ai/langchain",
+                "url": "https://github.com/langchain-ai/langchain",
+                "source": "github.com",
+                "summary": "The agent engineering platform.",
+                "stars": 149300,
+                "forks": 25104,
+                "open_issues": 739,
+                "language": "Python",
+                "license": "MIT",
+                "topics": [
+                  "agents",
+                  "ai",
+                  "ai-agents",
+                  "anthropic",
+                  "chatgpt",
+                  "deepagents",
+                  "enterprise",
+                  "framework",
+                  "gemini",
+                  "generative-ai",
+                  "langchain",
+                  "langgraph",
+                  "llm",
+                  "multiagent",
+                  "open-source",
+                  "openai",
+                  "pydantic",
+                  "python",
+                  "rag",
+                  "typescript"
+                ],
+                "last_push": "2026-11-10T08:28:09Z",
+                "archived": false
+              }
+            ]
+          }
+        },
+        {
+          "tool": "github_repo",
+          "args": {
+            "repo": "langchain-ai/langchain"
+          },
+          "result": {
+            "tool": "github_repo",
+            "repo": "langchain-ai/langchain",
+            "found": true,
+            "items": [
+              {
+                "title": "langchain-ai/langchain",
+                "url": "https://github.com/langchain-ai/langchain",
+                "source": "github.com",
+                "summary": "The agent engineering platform.",
+                "stars": 149300,
+                "forks": 25104,
+                "open_issues": 739,
+                "language": "Python",
+                "license": "MIT",
+                "topics": [
+                  "agents",
+                  "ai",
+                  "ai-agents",
+                  "anthropic",
+                  "chatgpt",
+                  "deepagents",
+                  "enterprise",
+                  "framework",
+                  "gemini",
+                  "generative-ai",
+                  "langchain",
+                  "langgraph",
+                  "llm",
+                  "multiagent",
+                  "open-source",
+                  "openai",
+                  "pydantic",
+                  "python",
+                  "rag",
+                  "typescript"
+                ],
+                "last_push": "2026-11-10T08:28:09Z",
+                "archived": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G04_hf_models_popular_for_task",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_new_tool_hf_models",
+        "difficulty": "medium",
+        "new_tool": "hf_models",
+        "what_it_tests": "Hỏi model open-weight phổ biến cho một task trên Hugging Face → hf_models, không phải papers (paper) hay github_repo (code)."
+      },
+      "input": "Trên Hugging Face, model speech-to-text nào đang được tải nhiều nhất?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {
+              "task": "automatic-speech-recognition",
+              "sort_by": "downloads",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "hf_models",
+          "args": {
+            "task": "automatic-speech-recognition",
+            "sort_by": "downloads",
+            "limit": 5
+          },
+          "result": {
+            "tool": "hf_models",
+            "query": "",
+            "task": "automatic-speech-recognition",
+            "sort_by": "downloads",
+            "found": true,
+            "items": [
+              {
+                "title": "argmaxinc/whisperkit-coreml",
+                "url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+                "source": "huggingface.co",
+                "task": "automatic-speech-recognition",
+                "library": "whisperkit",
+                "downloads": 54455770,
+                "likes": 262,
+                "license": "mit",
+                "arxiv": [],
+                "gated": false,
+                "date": "2024-02-28T08:05:21.000Z"
+              },
+              {
+                "title": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+                "url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+                "source": "huggingface.co",
+                "task": "automatic-speech-recognition",
+                "library": "transformers",
+                "downloads": 16256691,
+                "likes": 118,
+                "license": "apache-2.0",
+                "arxiv": [],
+                "gated": false,
+                "date": "2022-03-02T23:29:05.000Z"
+              },
+              {
+                "title": "pyannote/speaker-diarization-3.1",
+                "url": "https://huggingface.co/pyannote/speaker-diarization-3.1",
+                "source": "huggingface.co",
+                "task": "automatic-speech-recognition",
+                "library": "pyannote-audio",
+                "downloads": 6770592,
+                "likes": 5047,
+                "license": "mit",
+                "arxiv": [
+                  "2111.14448",
+                  "2012.01477"
+                ],
+                "gated": false,
+                "date": "2023-11-16T08:19:01.000Z"
+              },
+              {
+                "title": "Systran/faster-whisper-small",
+                "url": "https://huggingface.co/Systran/faster-whisper-small",
+                "source": "huggingface.co",
+                "task": "automatic-speech-recognition",
+                "library": "ctranslate2",
+                "downloads": 5792974,
+                "likes": 90,
+                "license": "mit",
+                "arxiv": [],
+                "gated": false,
+                "date": "2023-11-23T09:53:51.000Z"
+              },
+              {
+                "title": "pyannote/speaker-diarization-community-1",
+                "url": "https://huggingface.co/pyannote/speaker-diarization-community-1",
+                "source": "huggingface.co",
+                "task": "automatic-speech-recognition",
+                "library": "pyannote-audio",
+                "downloads": 5164817,
+                "likes": 4051,
+                "license": "cc-by-4.0",
+                "arxiv": [
+                  "2104.03603",
+                  "2111.14448",
+                  "2012.01477",
+                  "2110.07058"
+                ],
+                "gated": false,
+                "date": "2025-04-15T21:31:35.000Z"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
