@@ -180,8 +180,8 @@ version,author,changed_artifact,artifact_version,prompt_hash,tools_hash,reason,h
 ## 9. Checklist thực thi (theo đúng plan v2)
 
 **P0 — Chuẩn bị (làm trước, dùng chung cả nhóm)**
-- [x] Tạo `artifacts/_baseline/system_prompt_v0.md` (snapshot prompt gốc, TRƯỚC khi A sửa). — ✅ hash khớp `system_prompt.md`
-- [x] Tạo `artifacts/_baseline/tools_v0.yaml` (snapshot tools gốc, TRƯỚC khi B sửa). — ✅ hash khớp `tools.yaml`
+- [x] Tạo `artifacts/_baseline/system_prompt_v0.md` (snapshot prompt gốc, TRƯỚC khi A sửa). — ✅ khôi phục đúng v0 từ `c69f2bf^` (prompt "fast, proactive"); bản working đã bị A commit thành v1 nên phải lấy lại từ git history.
+- [x] Tạo `artifacts/_baseline/tools_v0.yaml` (snapshot tools gốc, TRƯỚC khi B sửa). — ✅ khôi phục từ `HEAD:starter_v0/artifacts/tools.yaml` (mô tả mơ hồ v0, vd `"Gửi một câu hỏi cho người dùng."`).
 - [x] `.venv` đã tạo, đã `pip install -r requirements.txt`, `preflight_provider.py --provider openrouter` pass. — ✅ `OK provider=openrouter model=openai/gpt-4o-mini`
 - [x] `pytest tests/test_tool_contract.py` xanh trên v0. — ✅ 55 passed
 
@@ -204,17 +204,17 @@ version,author,changed_artifact,artifact_version,prompt_hash,tools_hash,reason,h
 - [x] Kiểm KHÔNG đổi `name`/`type`/`enum`/`default`/`required`; KHÔNG thêm/xóa tool; KHÔNG đụng khối C. — ✅ diff cấu trúc vs `_baseline/tools_v0.yaml`: cùng 10 tên, cùng thứ tự, `type/default/enum/required` y hệt, 0 tool thêm/xóa.
 
 **P3 — Kiểm tĩnh trước khi eval**
-- [ ] `pytest tests/test_tool_contract.py` xanh.
-- [ ] `git diff artifacts/tools.yaml` → chỉ dòng `description` đổi.
-- [ ] YAML parse được (không lỗi indent).
+- [x] `pytest tests/test_tool_contract.py` xanh. — ✅ 55 passed
+- [x] `git diff artifacts/tools.yaml` → chỉ dòng `description` đổi. — ✅ 37 dòng sửa (74 dòng diff), **0 dòng không phải `description`**.
+- [x] YAML parse được (không lỗi indent). — ✅ `yaml.safe_load` OK.
 
 **P4 — Chạy eval v2 (như §5)**
-- [ ] Chạy đúng lệnh `run_eval.py` với `--system-prompt artifacts/_baseline/system_prompt_v0.md` và `--tools artifacts/tools.yaml`.
-- [ ] R03 PASS (query="AI", topic=news, timeframe=day).
-- [ ] R13 PASS (lookup query="AI" + topic=news, đồng thời có social_search query="AI").
-- [ ] Không regress: R01, R02, R04, R05, R06, R07, R09 PASS; M01–M06 PASS; `multiturn_accuracy=1.0`.
-- [ ] `case_accuracy` và `argument_accuracy` tăng so với 0.65/0.65.
-- [ ] R12 ghi nhận trạng thái (kỳ vọng vẫn FAIL ở v2 một mình; chỉ PASS khi ghép A).
+- [x] Chạy đúng lệnh `run_eval.py` với `--system-prompt artifacts/_baseline/system_prompt_v0.md` và `--tools artifacts/tools.yaml`. — ✅ run `runs/v2_B_base_openrouter_20261110T174610790159.json` (artifact_version `v2+pf0c107a9d7a1+tf157b4bf1101`).
+- [x] R03 PASS (query="AI", topic=news, timeframe=day). — ✅
+- [x] R13 PASS (lookup query="AI" + topic=news, đồng thời có social_search query="AI"). — ✅
+- [x] Không regress: R01, R02, R04, R05, R06, R07, R09 PASS; M01–M06 PASS; `multiturn_accuracy=1.0`. — ✅ tất cả PASS, `multiturn_accuracy=1.0`.
+- [x] `case_accuracy` và `argument_accuracy` tăng so với 0.65/0.65. — ✅ `case_accuracy=0.8`, `argument_accuracy=0.8`, `tool_routing_accuracy=0.8` (16/20 pass).
+- [x] R12 ghi nhận trạng thái (kỳ vọng vẫn FAIL ở v2 một mình; chỉ PASS khi ghép A). — ✅ R12 vẫn FAIL (wrong_boundary) như dự kiến; R10/R11 cũng FAIL (phạm vi A), R08 FAIL (phạm vi A).
 
 **P5 — Ghi log**
 - [ ] Thêm dòng `v2` đủ **11 cột** vào `artifacts/version_log.csv` (§8), có `run_file` trỏ tới run mới.
