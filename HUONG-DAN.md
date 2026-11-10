@@ -4,7 +4,7 @@
 
 Xây dựng một research agent có thể chọn và gọi tool, sau đó dùng kết quả chạy thật để cải thiện prompt và khai báo tool qua các phiên bản `v0`–`v3`. Hãy dựa vào log và số liệu, không chỉ đánh giá câu trả lời bằng cảm giác.
 
-Các hướng dẫn chi tiết của bài nằm trong [README.md](README.md), cấu hình API nằm trong [TOOL-SETUP.md](TOOL-SETUP.md), mẫu báo cáo nằm trong [starter_v0/artifacts/REPORT.md](starter_v0/artifacts/REPORT.md).
+Các hướng dẫn chi tiết của bài nằm trong [README.md](README.md), cấu hình API nằm trong [docs/TOOL-SETUP.md](docs/TOOL-SETUP.md), mẫu báo cáo nằm trong [report/team/group_report.md](report/team/group_report.md).
 
 ## Các bước thực hiện
 
@@ -40,7 +40,7 @@ RAPIDAPI_KEY=...
 RAPIDAPI_TWITTER_HOST=twitter-api45.p.rapidapi.com
 ```
 
-OpenRouter là provider được khuyến nghị; có thể dùng OpenAI, Anthropic hoặc Gemini thay thế. Telegram và arXiv là tùy chọn/bonus; xem [TOOL-SETUP.md](TOOL-SETUP.md) để biết cách cấu hình.
+OpenRouter là provider được khuyến nghị; có thể dùng OpenAI, Anthropic hoặc Gemini thay thế. Telegram và arXiv là tùy chọn/bonus; xem [docs/TOOL-SETUP.md](docs/TOOL-SETUP.md) để biết cách cấu hình.
 
 **Không đưa `.env` hoặc API key vào Git, báo cáo, ảnh chụp màn hình hay transcript.**
 
@@ -152,7 +152,7 @@ Dùng link được tạo trong phần giới thiệu báo cáo. Link tunnel là
 
 ### 12. Hoàn thiện báo cáo và nộp
 
-Hoàn thiện `starter_v0/artifacts/REPORT.md`:
+Hoàn thiện `report/team/group_report.md`:
 
 - **Phần A:** giới thiệu agent, liệt kê tool và đưa ra vài câu hỏi mẫu; hoàn thành trước buổi demo.
 - **Phần B:** điền bằng chứng từ run JSON, version log, eval, transcript và unit test; hoàn thiện để nộp.
