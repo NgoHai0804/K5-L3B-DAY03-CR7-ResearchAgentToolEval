@@ -45,7 +45,7 @@ tools:
       required: [query]
 
   - name: lookup
-    description: "Tra cứu thông tin trên web. topic='news' cho TIN TỨC/thời sự hiện tại; topic='general' cho kiến thức chung. KHÔNG dùng khi user đã đưa URL cụ thể (dùng fetch)."
+    description: "Tra cứu thông tin trên web. topic='news' cho TIN TỨC/thời sự hiện tại; topic='general' cho kiến thức chung. KHÔNG dùng khi user đã đưa URL cụ thể (dùng fetch). Yêu cầu làm bản tin / tin tức luôn cần lookup, kể cả khi user muốn kiểm tra thêm policy: gọi cả hai trong cùng lượt."
     parameters:
       type: object
       properties:
@@ -123,3 +123,58 @@ tools:
         max_pages: {type: integer, default: 5, description: "Số trang tối đa."}
         max_chars: {type: integer, default: 8000, description: "Số ký tự tối đa."}
       required: [arxiv_url]
+
+  # ---------------- Team tools (v3, Role C) ----------------
+  # Appended at the end on purpose: Role B owns the body above.
+  - name: rank_items
+    description: "Khử trùng lặp và xếp hạng danh sách item ĐÃ CÓ (kết quả từ lookup, social_search, papers... hoặc danh sách user dán vào). Dùng khi đã có items và user muốn bỏ trùng, lọc top N, xếp theo mới nhất / điểm cao / độ liên quan. KHÔNG lấy dữ liệu mới (gọi lookup/social_search/papers trước). KHÔNG dùng để trình bày bản tin (dùng format)."
+    parameters:
+      type: object
+      properties:
+        items:
+          type: array
+          default: []
+          description: "Danh sách item đã thu thập, giữ nguyên các trường từ tool trước."
+          items:
+            type: object
+            properties:
+              title: {type: string}
+              url: {type: string}
+              summary: {type: string}
+              date: {type: string}
+              score: {type: number}
+        sort_by: {type: string, enum: [recency, relevance, score], default: "recency", description: "recency = mới nhất; score = điểm/lượt tương tác cao nhất ('nổi bật', 'hot'); relevance = khớp từ khóa (bắt buộc kèm query)."}
+        query: {type: string, default: "", description: "Từ khóa, chỉ cần khi sort_by=relevance."}
+        dedupe: {type: boolean, default: true, description: "Bỏ item trùng url/title."}
+        top_k: {type: integer, default: 10, description: "Giữ tối đa bao nhiêu item. Lấy đúng con số user nói ('top 3' = 3)."}
+      required: [items]
+
+  - name: wiki
+    description: "Tra kiến thức nền ổn định trên Wikipedia: khái niệm, người, tổ chức, sự kiện ('X là gì', 'giới thiệu về Y', 'Y là ai'). KHÔNG dùng cho tin tức hay thông tin mới/gần đây (dùng lookup topic=news). KHÔNG dùng cho bài toán, tính toán hay viết code (ngoài phạm vi: không gọi tool)."
+    parameters:
+      type: object
+      properties:
+        query: {type: string, default: "", description: "Tên khái niệm/người/tổ chức cần tra, ngắn gọn. Ví dụ: 'Transformer deep learning', 'Geoffrey Hinton'."}
+        lang: {type: string, enum: [en, vi], default: "en", description: "Ngôn ngữ của Wikipedia, KHÔNG phải ngôn ngữ của câu hỏi. Luôn dùng en (đầy đủ và chính xác hơn), kể cả khi user hỏi bằng tiếng Việt. Chỉ dùng vi khi user nói rõ 'Wikipedia tiếng Việt' / 'nguồn tiếng Việt'."}
+        sentences: {type: integer, default: 5, description: "Số câu tóm tắt, 1-10."}
+      required: [query]
+
+  - name: github_repo
+    description: "Lấy thông tin MỘT repository GitHub: số star, fork, issue, ngôn ngữ, license, topics, lần push cuối, có bị archive không. Dùng khi user hỏi về một repo / thư viện / dự án open-source cụ thể ('repo X bao nhiêu star', 'còn được maintain không', 'license gì'). KHÔNG dùng để đọc README hay code (dùng fetch với URL repo). KHÔNG dùng cho model AI trên Hugging Face (dùng hf_models)."
+    parameters:
+      type: object
+      properties:
+        repo: {type: string, default: "", description: "Ưu tiên dạng 'owner/name' (vd 'langchain-ai/langchain', 'ollama/ollama') hoặc URL github.com. Chỉ truyền tên trống (vd 'langchain') khi thật sự không biết owner."}
+      required: [repo]
+
+  - name: hf_models
+    description: "Tìm model AI open-weight trên Hugging Face Hub, hoặc xem chi tiết một model: lượt tải (30 ngày), like, license, loại task, paper arXiv liên quan. Dùng khi user hỏi về model trên Hugging Face / model open-source ('model nào phổ biến cho task X', 'Qwen3 bao nhiêu lượt tải', 'license của Llama'). KHÔNG dùng cho paper (dùng papers) và KHÔNG dùng cho repo code GitHub (dùng github_repo)."
+    parameters:
+      type: object
+      properties:
+        query: {type: string, default: "", description: "Từ khóa tìm model, vd 'qwen', 'whisper'. Bỏ trống nếu đã có model_id."}
+        model_id: {type: string, default: "", description: "Id chính xác dạng 'org/name' (vd 'meta-llama/Llama-3.1-8B-Instruct') khi user hỏi về MỘT model cụ thể."}
+        task: {type: string, default: "", description: "Lọc theo task của Hugging Face, vd 'text-generation', 'automatic-speech-recognition', 'text-to-image'."}
+        sort_by: {type: string, enum: [downloads, likes, trending, recent], default: "downloads", description: "downloads = phổ biến nhất; likes = được yêu thích nhất; trending = đang hot; recent = mới nhất."}
+        limit: {type: integer, default: 5, description: "Số model, 1-20. Lấy đúng con số user nói."}
+      required: []
