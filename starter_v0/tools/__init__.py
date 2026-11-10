@@ -17,6 +17,8 @@ from .policy.tool import search_company_policy
 from .social_search.tool import search_tweets
 from .send.tool import send_telegram
 from .lookup.tool import web_search
+# Team tool (v3)
+from .rank_items.tool import rank_items
 
 
 # NOTE (starter_v0): tool names here are intentionally vague. These keys are the
@@ -35,8 +37,8 @@ TOOL_FUNCTIONS = {
     "policy": search_company_policy,
     "papers": arxiv_search,
     "paper_text": get_arxiv_paper_text,
-    # TODO(student): register your new tool here, e.g. "my_tool": my_tool_function,
-    # then declare it in artifacts/tools.yaml and run `pytest tests/test_tool_contract.py`.
+    # Team tool (v3) - declared at the END of artifacts/tools.yaml
+    "rank_items": rank_items,
 }
 
 

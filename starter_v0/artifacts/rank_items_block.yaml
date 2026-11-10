@@ -1,0 +1,25 @@
+
+  # ---------------- Team tool (v3, Role C) ----------------
+  # Appended at the end on purpose: Role B owns the body above.
+  - name: rank_items
+    description: "Khử trùng lặp và xếp hạng danh sách item ĐÃ CÓ (kết quả từ lookup, social_search, papers... hoặc danh sách user dán vào). Dùng khi đã có items và user muốn bỏ trùng, lọc top N, xếp theo mới nhất / điểm cao / độ liên quan. KHÔNG lấy dữ liệu mới (gọi lookup/social_search/papers trước). KHÔNG dùng để trình bày bản tin (dùng format)."
+    parameters:
+      type: object
+      properties:
+        items:
+          type: array
+          default: []
+          description: "Danh sách item đã thu thập, giữ nguyên các trường từ tool trước."
+          items:
+            type: object
+            properties:
+              title: {type: string}
+              url: {type: string}
+              summary: {type: string}
+              date: {type: string}
+              score: {type: number}
+        sort_by: {type: string, enum: [recency, relevance, score], default: "recency", description: "recency = mới nhất; score = điểm/lượt tương tác cao nhất ('nổi bật', 'hot'); relevance = khớp từ khóa (bắt buộc kèm query)."}
+        query: {type: string, default: "", description: "Từ khóa, chỉ cần khi sort_by=relevance."}
+        dedupe: {type: boolean, default: true, description: "Bỏ item trùng url/title."}
+        top_k: {type: integer, default: 10, description: "Giữ tối đa bao nhiêu item. Lấy đúng con số user nói ('top 3' = 3)."}
+      required: [items]
