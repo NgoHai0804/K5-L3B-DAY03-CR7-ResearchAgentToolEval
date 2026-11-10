@@ -2,6 +2,103 @@
   "dataset_id": "day04_v2_research_group",
   "dataset_role": "group",
   "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
-  "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "allowed_failure_types": [
+    "wrong_tool",
+    "wrong_arg_value",
+    "wrong_boundary",
+    "unnecessary_tool",
+    "out_of_scope",
+    "missing_info"
+  ],
+  "cases": [
+    {
+      "id": "G01_rank_items_dedupe_top",
+      "phase": "B",
+      "suite": "group",
+      "query": "Đây là kết quả mình đã tìm được: [{\"title\": \"OpenAI ra mắt GPT-5\", \"url\": \"https://openai.com/blog/gpt-5\", \"score\": 7}, {\"title\": \"OpenAI ra mắt GPT-5\", \"url\": \"https://openai.com/blog/gpt-5/\", \"score\": 7}, {\"title\": \"Anthropic công bố Claude mới\", \"url\": \"https://anthropic.com/news\", \"score\": 9}, {\"title\": \"Google cập nhật Gemini\", \"url\": \"https://blog.google/gemini\", \"score\": 4}]. Bỏ bài trùng rồi giữ 2 bài có điểm cao nhất giúp mình.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "rank_items",
+            "args": {
+              "sort_by": "score",
+              "top_k": 2
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "routing_new_tool_rank_items",
+        "difficulty": "medium",
+        "new_tool": "rank_items",
+        "what_it_tests": "Đã CÓ sẵn items + yêu cầu bỏ trùng/top N theo điểm → rank_items(sort_by=score, top_k=2), không phải format (trình bày) và không lookup lại."
+      }
+    },
+    {
+      "id": "G02_wiki_background_knowledge",
+      "phase": "B",
+      "suite": "group",
+      "query": "Transformer trong deep learning là gì? Giải thích ngắn gọn giúp mình.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "wiki",
+            "args": {}
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "routing_new_tool_wiki",
+        "difficulty": "easy",
+        "new_tool": "wiki",
+        "what_it_tests": "Câu hỏi kiến thức nền ổn định ('X là gì') → wiki, không phải lookup tin tức hay papers."
+      }
+    },
+    {
+      "id": "G03_github_repo_stars",
+      "phase": "B",
+      "suite": "group",
+      "query": "Repo langchain-ai/langchain trên GitHub hiện có bao nhiêu star và còn được maintain không?",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "github_repo",
+            "args": {
+              "repo": "langchain-ai/langchain"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "routing_new_tool_github_repo",
+        "difficulty": "easy",
+        "new_tool": "github_repo",
+        "what_it_tests": "Hỏi số star/hoạt động của một repo cụ thể → github_repo(repo='langchain-ai/langchain'), không fetch trang GitHub, không lookup web."
+      }
+    },
+    {
+      "id": "G04_hf_models_popular_for_task",
+      "phase": "B",
+      "suite": "group",
+      "query": "Trên Hugging Face, model speech-to-text nào đang được tải nhiều nhất?",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {}
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "routing_new_tool_hf_models",
+        "difficulty": "medium",
+        "new_tool": "hf_models",
+        "what_it_tests": "Hỏi model open-weight phổ biến cho một task trên Hugging Face → hf_models, không phải papers (paper) hay github_repo (code)."
+      }
+    }
+  ]
 }
