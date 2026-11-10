@@ -15,7 +15,7 @@
 
 | STT | Họ tên | MSSV | Email | GitHub | Vai trò |
 | --: | ------ | ---- | ----- | ------ | ------- |
-|   1 | Minh Đức `<cần điền họ đầy đủ>` | `<cần điền>` | tranminhduc2324@gmail.com | `<cần điền>` | A — Prompt & Boundary (v1, v3, v3-final), eval nhóm, chạy eval (TASK-1) |
+|   1 | Trần Minh Đức | 2A202603977 | tranminhduc2324@gmail.com | https://github.com/tmduc23 | A — Prompt & Boundary (v1, v3, v3-final), eval nhóm, chạy eval (TASK-1) |
 |   2 | Ngô Ngọc Hải | 2A202603939 | ngongochai0804@gmail.com | [NgoHai0804](https://github.com/NgoHai0804) | B — Tool & arg convention (v2), baseline v0, kế hoạch, UI Streamlit, transcript, stub test (TASK-2) |
 |   3 | Hoàng Minh Quyền | 2A202603961 | quyentryhard@gmail.com | [EddyTryToCode](https://github.com/EddyTryToCode) | C — 4 tool mới, unit test, eval case cho tool mới (TASK-3) |
 
@@ -27,11 +27,11 @@ Mỗi thành viên có báo cáo riêng trong `report/team/` theo dạng `MSSV_H
 
 | Thành viên | Báo cáo cá nhân |
 |---|---|
-| Minh Đức | `report/team/<MSSV>_<HoTen>.md` `<cần tạo>` |
-| Ngô Ngọc Hải | `report/team/2A202603939_NgoNgocHai.md` `<cần tạo>` |
+| Minh Đức | [report/team/2A202603977_TranMinhDuc.md](report/team/2A202603977_TranMinhDuc.md) |
+| Ngô Ngọc Hải | [report/team/2A202603939_NgoNgocHai.md](report/team/2A202603939_NgoNgocHai.md) |
 | Hoàng Minh Quyền | [report/team/2A202603961_HoangMinhQuyen.md](report/team/2A202603961_HoangMinhQuyen.md) |
 
-## MinhDuc-`<MSSV>`
+## TranMinhDuc-2A202603977
 
 ### Phần việc phụ trách
 

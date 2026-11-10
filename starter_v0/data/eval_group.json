@@ -1,7 +1,7 @@
 {
   "dataset_id": "day04_v2_research_group",
   "dataset_role": "group",
-  "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
+  "description": "10 case do NHÓM tự viết (đúng 5 single turn + 5 multi turn), KHÔNG lặp lại case base, tập trung vào 4 tool mới và các hành vi đa lượt mới. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), expect (tool_calls[...] hoặc no_tool=true), metadata.what_it_tests.",
   "allowed_failure_types": [
     "wrong_tool",
     "wrong_arg_value",
@@ -101,150 +101,150 @@
       }
     },
     {
-      "id": "G05_timeline_handle",
+      "id": "G05_format_digest_from_items",
       "phase": "B",
       "suite": "group",
-      "query": "Tweet mới nhất của Andrej Karpathy",
+      "query": "Đây là 3 tin mình đã thu thập: [{\"title\": \"OpenAI ra mắt GPT-5\", \"url\": \"https://openai.com/blog/gpt-5\", \"summary\": \"OpenAI công bố GPT-5.\"}, {\"title\": \"Anthropic ra Claude mới\", \"url\": \"https://anthropic.com/news\", \"summary\": \"Anthropic cập nhật Claude.\"}, {\"title\": \"Google cập nhật Gemini\", \"url\": \"https://blog.google/gemini\", \"summary\": \"Google nâng cấp Gemini.\"}]. Gom lại thành một bản tin markdown cho mình.",
       "failure_type": "wrong_tool",
       "expect": {
         "tool_calls": [
           {
-            "name": "timeline",
-            "args": {
-              "screenname": "karpathy"
-            }
+            "name": "format",
+            "args": {}
           }
         ]
       },
       "metadata": {
-        "what_it_tests": "Tweet CỦA một người -> timeline, map tên Andrej Karpathy -> handle karpathy."
+        "skill": "routing_format_present_only",
+        "difficulty": "medium",
+        "what_it_tests": "Đã CÓ items + chỉ yêu cầu trình bày → format. Không dùng lookup (đã có dữ liệu) và không dùng rank_items (không yêu cầu bỏ trùng/xếp hạng)."
       }
     },
     {
-      "id": "G06_news_timeframe_month",
-      "phase": "B",
-      "suite": "group",
-      "query": "Tin công nghệ tháng này",
-      "failure_type": "wrong_arg_value",
-      "expect": {
-        "tool_calls": [
-          {
-            "name": "lookup",
-            "args": {
-              "topic": "news",
-              "timeframe": "month"
-            }
-          }
-        ]
-      },
-      "metadata": {
-        "what_it_tests": "'tháng này' -> timeframe=month, tin tức -> topic=news."
-      }
-    },
-    {
-      "id": "G07_missing_keyword",
-      "phase": "B",
-      "suite": "group",
-      "query": "Tìm giúp mình tin này",
-      "failure_type": "missing_info",
-      "expect": {
-        "tool_calls": [
-          {
-            "name": "clarify",
-            "args": {
-              "response_type": "text"
-            }
-          }
-        ]
-      },
-      "metadata": {
-        "what_it_tests": "'tin này' không có chủ đề -> hỏi lại, không đoán từ khoá."
-      }
-    },
-    {
-      "id": "G08_out_of_scope_chitchat",
-      "phase": "B",
-      "suite": "group",
-      "query": "Kể cho mình một câu chuyện cười",
-      "failure_type": "out_of_scope",
-      "expect": {
-        "no_tool": true,
-        "behavior": "refuse"
-      },
-      "metadata": {
-        "what_it_tests": "Chit-chat ngoài phạm vi research -> không gọi tool, từ chối lịch sự."
-      }
-    },
-    {
-      "id": "G09_confirm_send",
-      "phase": "B",
-      "suite": "group",
-      "query": "Gửi bản tin AI sáng nay lên kênh Telegram của team nhé",
-      "failure_type": "wrong_boundary",
-      "expect": {
-        "tool_calls": [
-          {
-            "name": "clarify",
-            "args": {
-              "response_type": "yes_no"
-            }
-          }
-        ]
-      },
-      "metadata": {
-        "what_it_tests": "Hành động ghi ra bên ngoài -> xin xác nhận yes_no trước, không gọi send."
-      }
-    },
-    {
-      "id": "G10_clarify_then_handle",
+      "id": "G06_switch_twitter_to_github",
       "phase": "B",
       "suite": "group",
       "turns": [
         {
           "role": "user",
-          "content": "Tóm tắt 3 tweet mới nhất"
+          "content": "Mọi người nói gì về DeepSeek trên Twitter?"
         },
         {
           "role": "user",
-          "content": "Của Elon Musk"
+          "content": "Thôi bỏ Twitter đi, cho mình thông tin repo deepseek-ai/DeepSeek-V3 trên GitHub"
         },
         {
           "role": "user",
-          "content": "Đúng 3 cái thôi nhé"
+          "content": "Chỉ repo đó thôi, không cần tweet nữa"
         }
       ],
-      "failure_type": "missing_info",
+      "failure_type": "wrong_tool",
       "expect": {
         "tool_calls": [
           {
-            "name": "timeline",
+            "name": "github_repo",
             "args": {
-              "screenname": "elonmusk",
+              "repo": "deepseek-ai/DeepSeek-V3"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_switch_to_new_tool",
+        "difficulty": "hard",
+        "new_tool": "github_repo",
+        "what_it_tests": "User bỏ nguồn Twitter (social_search) và chuyển sang tool MỚI github_repo → chỉ gọi github_repo, không gọi lại social_search."
+      }
+    },
+    {
+      "id": "G07_hf_task_carryover_limit",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm model text-generation nhiều lượt tải nhất trên Hugging Face"
+        },
+        {
+          "role": "user",
+          "content": "Cho mình top 3 thôi nhé"
+        },
+        {
+          "role": "user",
+          "content": "Vẫn là model text-generation đấy"
+        }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {
               "limit": 3
             }
           }
         ]
       },
       "metadata": {
-        "what_it_tests": "Sau khi user bổ sung tên -> timeline với handle + limit mang từ lượt 1."
+        "skill": "multiturn_new_tool_arg_correction",
+        "difficulty": "hard",
+        "new_tool": "hf_models",
+        "what_it_tests": "Chỉ xử lý lượt cuối trên tool mới hf_models: áp dụng sửa số lượng ('top 3' → limit=3), không gọi thêm tool và không đoán lại chủ đề. (Chủ đề text-generation có thể biểu diễn bằng query hoặc task nên eval chỉ chốt routing + limit.)"
       }
     },
     {
-      "id": "G11_switch_tool",
+      "id": "G08_clarify_then_rank_items",
       "phase": "B",
       "suite": "group",
       "turns": [
         {
           "role": "user",
-          "content": "Mọi người nói gì về AI trên Twitter?"
+          "content": "Giúp mình xếp hạng đống tin này"
         },
         {
           "role": "user",
-          "content": "Bỏ Twitter, tìm trên web tin tức đi"
+          "content": "Đây nhé: [{\"title\": \"OpenAI ra mắt GPT-5\", \"url\": \"https://openai.com/blog/gpt-5\", \"score\": 7}, {\"title\": \"OpenAI ra mắt GPT-5\", \"url\": \"https://openai.com/blog/gpt-5/\", \"score\": 7}, {\"title\": \"Anthropic ra Claude mới\", \"url\": \"https://anthropic.com/news\", \"score\": 9}]"
         },
         {
           "role": "user",
-          "content": "Giữ chủ đề AI"
+          "content": "Bỏ trùng và lấy 2 cái điểm cao nhất"
+        }
+      ],
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "rank_items",
+            "args": {
+              "sort_by": "score",
+              "top_k": 2
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_clarify_then_new_tool",
+        "difficulty": "hard",
+        "new_tool": "rank_items",
+        "what_it_tests": "Lượt 1 chưa có items + chưa rõ tiêu chí → hỏi lại; sau khi user dán items và nêu yêu cầu → rank_items(sort_by=score, top_k=2)."
+      }
+    },
+    {
+      "id": "G09_wiki_then_news_switch",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "GPT-4 là gì?"
+        },
+        {
+          "role": "user",
+          "content": "Còn tin tức mới nhất về GPT-5 thì sao?"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ cần tin tức thôi, không giải thích khái niệm nữa"
         }
       ],
       "failure_type": "wrong_tool",
@@ -253,116 +253,52 @@
           {
             "name": "lookup",
             "args": {
-              "query": "AI",
+              "query": "GPT-5",
               "topic": "news"
             }
           }
         ]
       },
       "metadata": {
-        "what_it_tests": "User bỏ nguồn Twitter -> chỉ lookup news, không gọi thêm social_search."
+        "skill": "multiturn_drop_wiki_for_news",
+        "difficulty": "hard",
+        "what_it_tests": "User bỏ nhu cầu kiến thức nền (wiki) và chỉ muốn tin tức → chỉ lookup(topic=news, query=GPT-5), không gọi lại wiki."
       }
     },
     {
-      "id": "G12_correction_handle",
+      "id": "G10_correction_repo",
       "phase": "B",
       "suite": "group",
       "turns": [
         {
           "role": "user",
-          "content": "Tweet của Sam Altman"
+          "content": "Cho mình thông tin repo facebook/react trên GitHub"
         },
         {
           "role": "user",
-          "content": "À nhầm, của Andrej Karpathy"
+          "content": "À nhầm, cho mình repo vercel/next.js"
         },
         {
           "role": "user",
-          "content": "Lấy 5 cái"
+          "content": "Chỉ repo đó thôi"
         }
       ],
       "failure_type": "wrong_arg_value",
       "expect": {
         "tool_calls": [
           {
-            "name": "timeline",
+            "name": "github_repo",
             "args": {
-              "screenname": "karpathy",
-              "limit": 5
+              "repo": "vercel/next.js"
             }
           }
         ]
       },
       "metadata": {
-        "what_it_tests": "Áp dụng lời sửa handle (sama -> karpathy) + limit lượt cuối."
-      }
-    },
-    {
-      "id": "G13_carryover_timeframe",
-      "phase": "B",
-      "suite": "group",
-      "turns": [
-        {
-          "role": "user",
-          "content": "Tin AI tuần này có gì?"
-        },
-        {
-          "role": "user",
-          "content": "Còn blockchain thì sao?"
-        },
-        {
-          "role": "user",
-          "content": "Chỉ blockchain thôi, vẫn trong tuần này"
-        }
-      ],
-      "failure_type": "wrong_arg_value",
-      "expect": {
-        "tool_calls": [
-          {
-            "name": "lookup",
-            "args": {
-              "query": "blockchain",
-              "topic": "news",
-              "timeframe": "week"
-            }
-          }
-        ]
-      },
-      "metadata": {
-        "what_it_tests": "Đổi chủ đề nhưng mang theo topic=news + timeframe=week."
-      }
-    },
-    {
-      "id": "G14_clarify_then_url",
-      "phase": "B",
-      "suite": "group",
-      "turns": [
-        {
-          "role": "user",
-          "content": "Đọc giúp mình bài này"
-        },
-        {
-          "role": "user",
-          "content": "https://www.anthropic.com/news"
-        },
-        {
-          "role": "user",
-          "content": "Chỉ đọc đúng link đó"
-        }
-      ],
-      "failure_type": "missing_info",
-      "expect": {
-        "tool_calls": [
-          {
-            "name": "fetch",
-            "args": {
-              "url": "https://www.anthropic.com/news"
-            }
-          }
-        ]
-      },
-      "metadata": {
-        "what_it_tests": "URL bổ sung ở lượt sau -> fetch đúng URL, không lookup."
+        "skill": "multiturn_new_tool_arg_correction",
+        "difficulty": "hard",
+        "new_tool": "github_repo",
+        "what_it_tests": "Áp dụng lời sửa repo (facebook/react → vercel/next.js) ở lượt cuối trên tool mới github_repo."
       }
     }
   ]

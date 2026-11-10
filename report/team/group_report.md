@@ -74,18 +74,19 @@ Nguồn: `artifacts/version_log.csv` và `runs/*.json`. Metric = `case_accuracy`
 | v3 | Minh Đức | `system_prompt.md` | Hồi quy v2 và R12 là lỗi ưu tiên rule trong prompt: cấm search từ chung, hỏi xác nhận yes_no, bỏ nguồn thì không gọi lại | 0.85 | 1.0 | `runs/v3_B_base_openrouter_20261110T175903514571.json` |
 | v3-tools | Quyền Hoàng | `tools.yaml` + `tools/` (4 tool mới) | Tool mới không làm hỏng base nếu description nói rõ khi nào KHÔNG dùng; thêm vào mô tả `lookup` "bản tin luôn cần lookup" để sửa E06 | 1.0 | 1.0 (extension 0.9 → 1.0) | `runs/v3_B_base_openrouter_20261110T185801088833.json` |
 | v3-final | Minh Đức | `system_prompt.md` + `eval_group.json` | G03/G09 là lỗi ưu tiên rule, phải sửa ở prompt: routing tool mới, cấm gọi trùng, §0 send → chỉ `clarify` | group 0.75 (4 case) | group 1.0 (14 case) | `runs/v3_B_group_openrouter_20261110T191826129492.json` |
+| v3-group | CR7 | `data/eval_group.json` | Case nhóm trùng case base (G05–G14 cũ); rút về **đúng 10 case (5 single + 5 multi)** không lặp base mới đạt `RUBRIC.md` C5 | group 1.0 (14 case, trùng base) | group 1.0 (10 case mới) | `runs/v3_B_group_openrouter_20261110T235944198197.json` |
 
 Thứ tự trên đúng theo `generated_at` trong run JSON: v0 16:01 → v1 17:35 → v2 17:43 → v3 17:59 → v3-tools 18:58 → v3-final 19:18. Mỗi dòng chỉ đổi một artifact so với dòng trước.
 
 **Lưu ý về hash:** repo bật `core.autocrlf=true`, nên cùng một nội dung file cho ra hai hash khác nhau tuỳ máy lưu file bằng LF hay CRLF. Các cặp hash cùng nội dung: prompt v0 `f0c107a9` = `eb1c8179`; prompt v1 `c6efd30f` = `c862c96c`; prompt v3 `85cf7a6c` = `15fc51fa`; tools v2 `f157b4bf` = `5762f79b`; tools có 4 tool mới `548acc75` = `5c1aa1b2`. Prompt `f46f0b98` là prompt v1 có thêm 4 dòng Hải sửa trong commit `f961d3e`.
 
-Artifact chốt nộp: `v3+p219df60019b8+t5c1aa1b29a85`. Hash khớp file đang nộp. Kết quả đo 2 lần đều giống nhau:
+Artifact chốt nộp: `v3+p219df60019b8+t5c1aa1b29a85` (prompt bản LF; bản trong working-tree có thể ra hash khác do lẫn CRLF/LF — nội dung không đổi). `data/eval_group.json` **không** nằm trong `artifact_version` nên rút case không đổi hash. Kết quả đo 2 lần đều giống nhau:
 
 | Suite | case_accuracy | tool_routing | argument | multiturn | Run |
 |---|---:|---:|---:|---:|---|
 | base (20) | 1.0 | 1.0 | 1.0 | 1.0 | `v3_B_base_openrouter_20261110T191906249631.json` |
 | extension (10) | 1.0 | 1.0 | 1.0 | – | `v3_B_extension_openrouter_20261110T191927196399.json` |
-| group (14) | 1.0 | 1.0 | 1.0 | 1.0 | `v3_B_group_openrouter_20261110T191826129492.json` |
+| group (10) | 1.0 | 1.0 | 1.0 | 1.0 | `v3_B_group_openrouter_20261110T235944198197.json` |
 
 Ghi chú: v0 được chạy 4 lần với cùng hash (0.65 / 0.65 / 0.70 / 0.70), cho thấy dao động ±0.05 giữa các lần chạy. Các run gắn nhãn lệch, không dùng làm bằng chứng chính:
 - `v0_..._175752360051` (1.0) và 3 run `dev_*` dùng prompt v3 (`85cf7a6c`) chứ không phải prompt v0. Chúng chỉ xác nhận lại kết quả 1.0 của v3.
@@ -118,24 +119,20 @@ Lấy từ `results[*].result.failures`.
 
 ## B3. Team Eval Cases
 
-`data/eval_group.json` có 14 case: 9 single-turn, 5 multi-turn. Kết quả từ run `v3_B_group_openrouter_20261110T191826129492.json`.
+`data/eval_group.json` có **10 case: 5 single-turn + 5 multi-turn** (đúng `RUBRIC.md` C5), **không lặp** case base; 8/10 case route tới 4 tool mới. Kết quả từ run `v3_B_group_openrouter_20261110T235944198197.json` (10/10 PASS).
 
 | Case ID | Turn | What It Tests | Expected Tool/Behavior | Result |
 |---|---|---|---|---|
-| G01_rank_items_dedupe_top | single | Đã có items, cần bỏ trùng và lấy top theo điểm | `rank_items(sort_by=score, top_k=2)` | PASS |
-| G02_wiki_background_knowledge | single | "X là gì" → kiến thức nền | `wiki` | PASS |
-| G03_github_repo_stars | single | Star + maintain của 1 repo, chỉ 1 lần gọi | `github_repo(repo="langchain-ai/langchain")` | PASS |
-| G04_hf_models_popular_for_task | single | Model phổ biến cho một task | `hf_models` | PASS |
-| G05_timeline_handle | single | Map tên → handle | `timeline(screenname=karpathy)` | PASS |
-| G06_news_timeframe_month | single | "tháng này" → `timeframe=month` | `lookup(topic=news, timeframe=month)` | PASS |
-| G07_missing_keyword | single | "tin này" thiếu chủ đề | `clarify(response_type=text)` | PASS |
-| G08_out_of_scope_chitchat | single | Chuyện cười ngoài phạm vi | không gọi tool | PASS |
-| G09_confirm_send | single | Gửi Telegram phải xin xác nhận | `clarify(response_type=yes_no)` | PASS |
-| G10_clarify_then_handle | multi | Bổ sung tên, giữ `limit` từ lượt 1 | `timeline(screenname=elonmusk, limit=3)` | PASS |
-| G11_switch_tool | multi | Bỏ Twitter → chỉ web news | `lookup(query=AI, topic=news)` | PASS |
-| G12_correction_handle | multi | Sửa handle sama → karpathy | `timeline(screenname=karpathy, limit=5)` | PASS |
-| G13_carryover_timeframe | multi | Đổi chủ đề, giữ `timeframe=week` | `lookup(query=blockchain, topic=news, timeframe=week)` | PASS |
-| G14_clarify_then_url | multi | URL bổ sung ở lượt sau | `fetch(url="https://www.anthropic.com/news")` | PASS |
+| G01_rank_items_dedupe_top | single | Đã có items → bỏ trùng, lấy top theo điểm (tool mới) | `rank_items(sort_by=score, top_k=2)` | PASS |
+| G02_wiki_background_knowledge | single | "X là gì" → kiến thức nền (tool mới) | `wiki` | PASS |
+| G03_github_repo_stars | single | Star + maintain của 1 repo, 1 lần gọi (tool mới) | `github_repo(repo="langchain-ai/langchain")` | PASS |
+| G04_hf_models_popular_for_task | single | Model phổ biến cho một task (tool mới) | `hf_models` | PASS |
+| G05_format_digest_from_items | single | Đã có items → chỉ trình bày digest (không lookup/không rank) | `format` | PASS |
+| G06_switch_twitter_to_github | multi | Bỏ Twitter → chuyển sang tool mới `github_repo` | `github_repo(repo="deepseek-ai/DeepSeek-V3")` | PASS |
+| G07_hf_task_carryover_limit | multi | Lượt cuối sửa số lượng trên tool mới (`top 3` → `limit=3`) | `hf_models(limit=3)` | PASS |
+| G08_clarify_then_rank_items | multi | Lượt 1 thiếu items → hỏi lại; sau đó xếp hạng (tool mới) | `rank_items(sort_by=score, top_k=2)` | PASS |
+| G09_wiki_then_news_switch | multi | Bỏ nhu cầu khái niệm (wiki) → chỉ tin tức | `lookup(query="GPT-5", topic="news")` | PASS |
+| G10_correction_repo | multi | Sửa repo (`facebook/react` → `vercel/next.js`) trên tool mới | `github_repo(repo="vercel/next.js")` | PASS |
 
 ## B4. Live Chat Evidence
 
@@ -159,7 +156,7 @@ Transcript cũ `v3_openrouter_20261110T185545472999.transcript.json` (artifact `
 |---|---|---|---|
 | send (Telegram) | `transcripts/v3_openrouter_20261110T215800069030.transcript.json` (turn 1 `clarify(yes_no)` → turn 2 user "có" → `send(confirmed=true)` → `status: sent`) | Agent xin xác nhận trước rồi mới gửi; gửi thật thành công qua đúng code path `tools/send/tool.py:11` | `send` trả `needs_confirmation` khi `confirmed=false`; prompt §0 ưu tiên xin xác nhận |
 | arXiv/company policy | `runs/v3_B_extension_openrouter_20261110T191927196399.json` | `papers`, `paper_text`, `policy` đã khai báo, có test; extension 1.0 | Dòng kiểu "ra lệnh" trong policy được tách sang `untrusted_text` |
-| 4 tool mới (rank_items, wiki, github_repo, hf_models) | `tools/TEAM_TOOLS.md`, `plans/TASK-3-New-Tools.md`, `runs/v3_B_group_*` | Group 14/14; base không giảm (tool mới bị gọi 0 lần trong base) | GitHub không token: 60 req/giờ; lỗi HTTP trả error dict |
+| 4 tool mới (rank_items, wiki, github_repo, hf_models) | `tools/TEAM_TOOLS.md`, `plans/TASK-3-New-Tools.md`, `runs/v3_B_group_openrouter_20261110T235944198197.json` | Group 10/10 (8 case route tới tool mới); base không giảm (tool mới bị gọi 0 lần trong base) | GitHub không token: 60 req/giờ; lỗi HTTP trả error dict |
 | UI | `app.py` (Streamlit) | Chat multi-turn, hiện tool call + args + kết quả, sidebar artifact_version; link public https://survivors-muscles-robots-expired.trycloudflare.com | Link `trycloudflare` tạm thời, sống theo phiên `cloudflared` |
 | Tool unit tests (`tests/`) | `pytest` output | **164 passed, 0 failed, 0 skipped** | Test offline, HTTP bị chặn và mock |
 
@@ -177,3 +174,15 @@ Ví dụ lỗi unit test bắt được mà eval không bắt được: `rank_it
 ## B7. Small Local Model Challenge (bonus)
 
 Nhóm chưa làm phần này.
+
+## B8. Khó khăn và cách xử lý
+
+Theo [RULES.md](../../RULES.md) (mục lỗi kỹ thuật), ghi lại các khó khăn gặp phải và cách xử lý:
+
+| Khó khăn | Bằng chứng | Cách xử lý |
+|---|---|---|
+| `RAPIDAPI_KEY` rỗng (máy chạy chưa có key) → `timeline`/`social_search` trả `RuntimeError: Missing RAPIDAPI_KEY` | transcript `v3_openrouter_20261110T194324903467` turn 4 | Agent **báo lỗi cho user** thay vì bịa tweet; eval vẫn PASS vì chỉ chấm routing/args — đây là gap vận hành, không phải lỗi agent. Cần điền key thật để demo live trọn vẹn |
+| Link dùng thử là `cloudflared` quick tunnel, sống theo phiên | mục A1, `report/team/poster.html` | Ghi rõ link tạm thời; mở lại tunnel phải cập nhật lại A1/poster (hoặc deploy Streamlit Cloud/Vercel để có link ổn định) |
+| Base eval tự dao động giữa các lần chạy cùng cấu hình | v0 chạy 4 lần: 0.65 / 0.65 / 0.70 / 0.70 (dòng `v0`) | Chạy lặp 2–4 lần và báo rõ số lần chạy thay vì tin một lần; kết luận chỉ dựa trên đối chứng |
+| Hash prompt/tools khác nhau giữa các máy do `core.autocrlf` (LF↔CRLF) | ghi chú hash ở B1 | Ghi cặp hash tương đương; `artifact_version` trong run có thể khác hash working-tree nhưng nội dung không đổi |
+| Case nhóm ban đầu (14 case) trùng case base nên theo `RUBRIC.md` C5 "chép case có sẵn thì không tính" | dòng `v3-group` trong `version_log.csv` | Rút về đúng 10 case (5 single + 5 multi) mới, không lặp base; chạy lại `--suite group` = 10/10 |

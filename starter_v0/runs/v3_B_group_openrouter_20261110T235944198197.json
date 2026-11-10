@@ -1,0 +1,1000 @@
+{
+  "run_id": "v3_B_group_openrouter_20261110T235944198197",
+  "version": "v3",
+  "artifact_version": "v3+pbb54e32d78b2+t5c1aa1b29a85",
+  "prompt_hash": "bb54e32d78b28a735c4863216d3022bd63ca3404deeef95da39fc1b83103bf44",
+  "tools_hash": "5c1aa1b29a8511e22ab7dec1edc4c6f58b4a411ae445785531259469a4f2a5ac",
+  "phase": "B",
+  "suite": "group",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "D:\\AI20K\\Day03\\lab\\K5-L3B-DAY03-NgoNgocHai-2A202603939-Prompt-Function-Calling-Tool-Design-MCP-\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "D:\\AI20K\\Day03\\lab\\K5-L3B-DAY03-NgoNgocHai-2A202603939-Prompt-Function-Calling-Tool-Design-MCP-\\starter_v0\\artifacts\\tools.yaml",
+  "eval_cases": "data\\eval_group.json",
+  "dataset_id": "day04_v2_research_group",
+  "dataset_role": "group",
+  "description": "10 case do NHÓM tự viết (đúng 5 single turn + 5 multi turn), KHÔNG lặp lại case base, tập trung vào 4 tool mới và các hành vi đa lượt mới. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), expect (tool_calls[...] hoặc no_tool=true), metadata.what_it_tests.",
+  "generated_at": "2026-11-10T23:59:44",
+  "summary": {
+    "total_cases": 10,
+    "measured_cases": 10,
+    "provider_error_cases": 0,
+    "passed_cases": 10,
+    "case_accuracy": 1.0,
+    "tool_routing_accuracy": 1.0,
+    "argument_accuracy": 1.0,
+    "multiturn_accuracy": 1.0,
+    "failure_counts": {},
+    "observed_mismatch_counts": {}
+  },
+  "results": [
+    {
+      "id": "G01_rank_items_dedupe_top",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_new_tool_rank_items",
+        "difficulty": "medium",
+        "new_tool": "rank_items",
+        "what_it_tests": "Đã CÓ sẵn items + yêu cầu bỏ trùng/top N theo điểm → rank_items(sort_by=score, top_k=2), không phải format (trình bày) và không lookup lại."
+      },
+      "input": "Đây là kết quả mình đã tìm được: [{\"title\": \"OpenAI ra mắt GPT-5\", \"url\": \"https://openai.com/blog/gpt-5\", \"score\": 7}, {\"title\": \"OpenAI ra mắt GPT-5\", \"url\": \"https://openai.com/blog/gpt-5/\", \"score\": 7}, {\"title\": \"Anthropic công bố Claude mới\", \"url\": \"https://anthropic.com/news\", \"score\": 9}, {\"title\": \"Google cập nhật Gemini\", \"url\": \"https://blog.google/gemini\", \"score\": 4}]. Bỏ bài trùng rồi giữ 2 bài có điểm cao nhất giúp mình.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "rank_items",
+            "args": {
+              "sort_by": "score",
+              "top_k": 2
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "rank_items",
+            "args": {
+              "items": [
+                {
+                  "title": "OpenAI ra mắt GPT-5",
+                  "url": "https://openai.com/blog/gpt-5",
+                  "score": 7
+                },
+                {
+                  "title": "OpenAI ra mắt GPT-5",
+                  "url": "https://openai.com/blog/gpt-5/",
+                  "score": 7
+                },
+                {
+                  "title": "Anthropic công bố Claude mới",
+                  "url": "https://anthropic.com/news",
+                  "score": 9
+                },
+                {
+                  "title": "Google cập nhật Gemini",
+                  "url": "https://blog.google/gemini",
+                  "score": 4
+                }
+              ],
+              "sort_by": "score",
+              "dedupe": true,
+              "top_k": 2
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "rank_items",
+          "args": {
+            "items": [
+              {
+                "title": "OpenAI ra mắt GPT-5",
+                "url": "https://openai.com/blog/gpt-5",
+                "score": 7
+              },
+              {
+                "title": "OpenAI ra mắt GPT-5",
+                "url": "https://openai.com/blog/gpt-5/",
+                "score": 7
+              },
+              {
+                "title": "Anthropic công bố Claude mới",
+                "url": "https://anthropic.com/news",
+                "score": 9
+              },
+              {
+                "title": "Google cập nhật Gemini",
+                "url": "https://blog.google/gemini",
+                "score": 4
+              }
+            ],
+            "sort_by": "score",
+            "dedupe": true,
+            "top_k": 2
+          },
+          "result": {
+            "tool": "rank_items",
+            "sort_by": "score",
+            "items": [
+              {
+                "title": "Anthropic công bố Claude mới",
+                "url": "https://anthropic.com/news",
+                "score": 9
+              },
+              {
+                "title": "OpenAI ra mắt GPT-5",
+                "url": "https://openai.com/blog/gpt-5",
+                "score": 7
+              }
+            ],
+            "count": 2,
+            "removed": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "G02_wiki_background_knowledge",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_new_tool_wiki",
+        "difficulty": "easy",
+        "new_tool": "wiki",
+        "what_it_tests": "Câu hỏi kiến thức nền ổn định ('X là gì') → wiki, không phải lookup tin tức hay papers."
+      },
+      "input": "Transformer trong deep learning là gì? Giải thích ngắn gọn giúp mình.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "wiki",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "wiki",
+            "args": {
+              "query": "Transformer deep learning",
+              "sentences": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "wiki",
+          "args": {
+            "query": "Transformer deep learning",
+            "sentences": 5
+          },
+          "result": {
+            "tool": "wiki_summary",
+            "query": "Transformer deep learning",
+            "lang": "en",
+            "found": true,
+            "items": [
+              {
+                "title": "Transformer (deep learning)",
+                "url": "https://en.wikipedia.org/wiki/Transformer_(deep_learning)",
+                "source": "en.wikipedia.org",
+                "summary": "In deep learning, the transformer is a family of artificial neural network architectures based on the multi-head attention mechanism, in which input data such as text, images, or audio is  converted to a sequence of numerical representations called tokens, and each token is converted into a vector through an embedding layer. At each layer, each token is then contextualized within the scope of the context window with other (unmasked) tokens via a parallel multi-head attention mechanism, allowing the signal for key tokens to be amplified and less important tokens to be diminished. Because self-attention alone is permutation-invariant, transformers inject positional information, typically through positional encodings or learned positional embeddings, so token order can affect the output.\nBecause transformers do not process tokens one at a time, their computations can be parallelized across sequence positions during training more readily than those of recurrent neural networks like long short-term memory (LSTM). Later variations have been widely adopted for training large language models (LLMs) on large (language) datasets.",
+                "is_disambiguation": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G03_github_repo_stars",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_new_tool_github_repo",
+        "difficulty": "easy",
+        "new_tool": "github_repo",
+        "what_it_tests": "Hỏi số star/hoạt động của một repo cụ thể → github_repo(repo='langchain-ai/langchain'), không fetch trang GitHub, không lookup web."
+      },
+      "input": "Repo langchain-ai/langchain trên GitHub hiện có bao nhiêu star và còn được maintain không?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "github_repo",
+            "args": {
+              "repo": "langchain-ai/langchain"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "github_repo",
+            "args": {
+              "repo": "langchain-ai/langchain"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "github_repo",
+          "args": {
+            "repo": "langchain-ai/langchain"
+          },
+          "result": {
+            "tool": "github_repo",
+            "repo": "langchain-ai/langchain",
+            "found": true,
+            "items": [
+              {
+                "title": "langchain-ai/langchain",
+                "url": "https://github.com/langchain-ai/langchain",
+                "source": "github.com",
+                "summary": "The agent engineering platform.",
+                "stars": 149310,
+                "forks": 25104,
+                "open_issues": 741,
+                "language": "Python",
+                "license": "MIT",
+                "topics": [
+                  "agents",
+                  "ai",
+                  "ai-agents",
+                  "anthropic",
+                  "chatgpt",
+                  "deepagents",
+                  "enterprise",
+                  "framework",
+                  "gemini",
+                  "generative-ai",
+                  "langchain",
+                  "langgraph",
+                  "llm",
+                  "multiagent",
+                  "open-source",
+                  "openai",
+                  "pydantic",
+                  "python",
+                  "rag",
+                  "typescript"
+                ],
+                "last_push": "2026-11-10T16:25:55Z",
+                "archived": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G04_hf_models_popular_for_task",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_new_tool_hf_models",
+        "difficulty": "medium",
+        "new_tool": "hf_models",
+        "what_it_tests": "Hỏi model open-weight phổ biến cho một task trên Hugging Face → hf_models, không phải papers (paper) hay github_repo (code)."
+      },
+      "input": "Trên Hugging Face, model speech-to-text nào đang được tải nhiều nhất?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {
+              "task": "automatic-speech-recognition",
+              "sort_by": "downloads",
+              "limit": 1
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "hf_models",
+          "args": {
+            "task": "automatic-speech-recognition",
+            "sort_by": "downloads",
+            "limit": 1
+          },
+          "result": {
+            "tool": "hf_models",
+            "query": "",
+            "task": "automatic-speech-recognition",
+            "sort_by": "downloads",
+            "found": true,
+            "items": [
+              {
+                "title": "argmaxinc/whisperkit-coreml",
+                "url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+                "source": "huggingface.co",
+                "task": "automatic-speech-recognition",
+                "library": "whisperkit",
+                "downloads": 54455770,
+                "likes": 262,
+                "license": "mit",
+                "arxiv": [],
+                "gated": false,
+                "date": "2024-02-28T08:05:21.000Z"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G05_format_digest_from_items",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_format_present_only",
+        "difficulty": "medium",
+        "what_it_tests": "Đã CÓ items + chỉ yêu cầu trình bày → format. Không dùng lookup (đã có dữ liệu) và không dùng rank_items (không yêu cầu bỏ trùng/xếp hạng)."
+      },
+      "input": "Đây là 3 tin mình đã thu thập: [{\"title\": \"OpenAI ra mắt GPT-5\", \"url\": \"https://openai.com/blog/gpt-5\", \"summary\": \"OpenAI công bố GPT-5.\"}, {\"title\": \"Anthropic ra Claude mới\", \"url\": \"https://anthropic.com/news\", \"summary\": \"Anthropic cập nhật Claude.\"}, {\"title\": \"Google cập nhật Gemini\", \"url\": \"https://blog.google/gemini\", \"summary\": \"Google nâng cấp Gemini.\"}]. Gom lại thành một bản tin markdown cho mình.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "format",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "format",
+            "args": {
+              "items": [
+                {
+                  "title": "OpenAI ra mắt GPT-5",
+                  "url": "https://openai.com/blog/gpt-5",
+                  "summary": "OpenAI công bố GPT-5."
+                },
+                {
+                  "title": "Anthropic ra Claude mới",
+                  "url": "https://anthropic.com/news",
+                  "summary": "Anthropic cập nhật Claude."
+                },
+                {
+                  "title": "Google cập nhật Gemini",
+                  "url": "https://blog.google/gemini",
+                  "summary": "Google nâng cấp Gemini."
+                }
+              ],
+              "template": "sections",
+              "headline": "Bản tin công nghệ mới nhất"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "format",
+          "args": {
+            "items": [
+              {
+                "title": "OpenAI ra mắt GPT-5",
+                "url": "https://openai.com/blog/gpt-5",
+                "summary": "OpenAI công bố GPT-5."
+              },
+              {
+                "title": "Anthropic ra Claude mới",
+                "url": "https://anthropic.com/news",
+                "summary": "Anthropic cập nhật Claude."
+              },
+              {
+                "title": "Google cập nhật Gemini",
+                "url": "https://blog.google/gemini",
+                "summary": "Google nâng cấp Gemini."
+              }
+            ],
+            "template": "sections",
+            "headline": "Bản tin công nghệ mới nhất"
+          },
+          "result": {
+            "tool": "render_digest",
+            "template": "sections",
+            "markdown": "# Bản tin công nghệ mới nhất\n\n## Tổng hợp\n- OpenAI công bố GPT-5. - [openai.com](https://openai.com/blog/gpt-5)\n- Anthropic cập nhật Claude. - [anthropic.com](https://anthropic.com/news)\n- Google nâng cấp Gemini. - [blog.google](https://blog.google/gemini)\n",
+            "item_count": 3
+          }
+        }
+      ]
+    },
+    {
+      "id": "G06_switch_twitter_to_github",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_switch_to_new_tool",
+        "difficulty": "hard",
+        "new_tool": "github_repo",
+        "what_it_tests": "User bỏ nguồn Twitter (social_search) và chuyển sang tool MỚI github_repo → chỉ gọi github_repo, không gọi lại social_search."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Mọi người nói gì về DeepSeek trên Twitter?"
+        },
+        {
+          "role": "user",
+          "content": "Thôi bỏ Twitter đi, cho mình thông tin repo deepseek-ai/DeepSeek-V3 trên GitHub"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ repo đó thôi, không cần tweet nữa"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "github_repo",
+            "args": {
+              "repo": "deepseek-ai/DeepSeek-V3"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "github_repo",
+            "args": {
+              "repo": "deepseek-ai/DeepSeek-V3"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "github_repo",
+          "args": {
+            "repo": "deepseek-ai/DeepSeek-V3"
+          },
+          "result": {
+            "tool": "github_repo",
+            "repo": "deepseek-ai/DeepSeek-V3",
+            "found": true,
+            "items": [
+              {
+                "title": "deepseek-ai/DeepSeek-V3",
+                "url": "https://github.com/deepseek-ai/DeepSeek-V3",
+                "source": "github.com",
+                "summary": "",
+                "stars": 104792,
+                "forks": 16746,
+                "open_issues": 330,
+                "language": "Python",
+                "license": "MIT",
+                "topics": [],
+                "last_push": "2025-08-28T03:24:37Z",
+                "archived": false
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G07_hf_task_carryover_limit",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_new_tool_arg_correction",
+        "difficulty": "hard",
+        "new_tool": "hf_models",
+        "what_it_tests": "Chỉ xử lý lượt cuối trên tool mới hf_models: áp dụng sửa số lượng ('top 3' → limit=3), không gọi thêm tool và không đoán lại chủ đề. (Chủ đề text-generation có thể biểu diễn bằng query hoặc task nên eval chỉ chốt routing + limit.)"
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm model text-generation nhiều lượt tải nhất trên Hugging Face"
+        },
+        {
+          "role": "user",
+          "content": "Cho mình top 3 thôi nhé"
+        },
+        {
+          "role": "user",
+          "content": "Vẫn là model text-generation đấy"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {
+              "query": "text-generation",
+              "sort_by": "downloads",
+              "limit": 3
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "hf_models",
+          "args": {
+            "query": "text-generation",
+            "sort_by": "downloads",
+            "limit": 3
+          },
+          "result": {
+            "tool": "hf_models",
+            "query": "text-generation",
+            "task": null,
+            "sort_by": "downloads",
+            "found": true,
+            "items": [
+              {
+                "title": "gligen/gligen-generation-text-box",
+                "url": "https://huggingface.co/gligen/gligen-generation-text-box",
+                "source": "huggingface.co",
+                "task": null,
+                "library": "diffusers",
+                "downloads": 1610,
+                "likes": 5,
+                "license": null,
+                "arxiv": [],
+                "gated": false,
+                "date": "2023-03-04T17:37:39.000Z"
+              },
+              {
+                "title": "NYTK/text-generation-news-gpt2-small-hungarian",
+                "url": "https://huggingface.co/NYTK/text-generation-news-gpt2-small-hungarian",
+                "source": "huggingface.co",
+                "task": "text-generation",
+                "library": "transformers",
+                "downloads": 1031,
+                "likes": 9,
+                "license": "mit",
+                "arxiv": [],
+                "gated": false,
+                "date": "2022-03-02T23:29:04.000Z"
+              },
+              {
+                "title": "masterful/gligen-1-4-generation-text-box",
+                "url": "https://huggingface.co/masterful/gligen-1-4-generation-text-box",
+                "source": "huggingface.co",
+                "task": "text-to-image",
+                "library": "diffusers",
+                "downloads": 522,
+                "likes": 10,
+                "license": "creativeml-openrail-m",
+                "arxiv": [
+                  "2112.10752",
+                  "2103.00020",
+                  "2205.11487",
+                  "2301.07093"
+                ],
+                "gated": false,
+                "date": "2023-08-08T21:16:55.000Z"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G08_clarify_then_rank_items",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_clarify_then_new_tool",
+        "difficulty": "hard",
+        "new_tool": "rank_items",
+        "what_it_tests": "Lượt 1 chưa có items + chưa rõ tiêu chí → hỏi lại; sau khi user dán items và nêu yêu cầu → rank_items(sort_by=score, top_k=2)."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Giúp mình xếp hạng đống tin này"
+        },
+        {
+          "role": "user",
+          "content": "Đây nhé: [{\"title\": \"OpenAI ra mắt GPT-5\", \"url\": \"https://openai.com/blog/gpt-5\", \"score\": 7}, {\"title\": \"OpenAI ra mắt GPT-5\", \"url\": \"https://openai.com/blog/gpt-5/\", \"score\": 7}, {\"title\": \"Anthropic ra Claude mới\", \"url\": \"https://anthropic.com/news\", \"score\": 9}]"
+        },
+        {
+          "role": "user",
+          "content": "Bỏ trùng và lấy 2 cái điểm cao nhất"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "rank_items",
+            "args": {
+              "sort_by": "score",
+              "top_k": 2
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "rank_items",
+            "args": {
+              "items": [
+                {
+                  "title": "OpenAI ra mắt GPT-5",
+                  "url": "https://openai.com/blog/gpt-5",
+                  "score": 7
+                },
+                {
+                  "title": "OpenAI ra mắt GPT-5",
+                  "url": "https://openai.com/blog/gpt-5/",
+                  "score": 7
+                },
+                {
+                  "title": "Anthropic ra Claude mới",
+                  "url": "https://anthropic.com/news",
+                  "score": 9
+                }
+              ],
+              "dedupe": true,
+              "top_k": 2,
+              "sort_by": "score"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "rank_items",
+          "args": {
+            "items": [
+              {
+                "title": "OpenAI ra mắt GPT-5",
+                "url": "https://openai.com/blog/gpt-5",
+                "score": 7
+              },
+              {
+                "title": "OpenAI ra mắt GPT-5",
+                "url": "https://openai.com/blog/gpt-5/",
+                "score": 7
+              },
+              {
+                "title": "Anthropic ra Claude mới",
+                "url": "https://anthropic.com/news",
+                "score": 9
+              }
+            ],
+            "dedupe": true,
+            "top_k": 2,
+            "sort_by": "score"
+          },
+          "result": {
+            "tool": "rank_items",
+            "sort_by": "score",
+            "items": [
+              {
+                "title": "Anthropic ra Claude mới",
+                "url": "https://anthropic.com/news",
+                "score": 9
+              },
+              {
+                "title": "OpenAI ra mắt GPT-5",
+                "url": "https://openai.com/blog/gpt-5",
+                "score": 7
+              }
+            ],
+            "count": 2,
+            "removed": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "G09_wiki_then_news_switch",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_drop_wiki_for_news",
+        "difficulty": "hard",
+        "what_it_tests": "User bỏ nhu cầu kiến thức nền (wiki) và chỉ muốn tin tức → chỉ lookup(topic=news, query=GPT-5), không gọi lại wiki."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "GPT-4 là gì?"
+        },
+        {
+          "role": "user",
+          "content": "Còn tin tức mới nhất về GPT-5 thì sao?"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ cần tin tức thôi, không giải thích khái niệm nữa"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "GPT-5",
+              "topic": "news"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "GPT-5",
+              "topic": "news"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "GPT-5",
+            "topic": "news"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "GPT-5",
+            "topic": "news",
+            "timeframe": "week",
+            "items": [
+              {
+                "title": "GPT-5 Shows Substantial Agreement in Interpreting Ultrasound Cochrane",
+                "url": "https://bioengineer.org/gpt-5-shows-substantial-agreement-in-interpreting-ultrasound-cochrane-reviews",
+                "source": "bioengineer.org",
+                "summary": "When compared to the consensus reference standard, GPT-5 demonstrated varying levels of agreement across the different variables. The model showed the highest agreement for review purpose, with 88.9% exact agreement and a Cohen’s kappa of 0.793. For evidence certainty, the model achieved 70.4% exact agreement, with a quadratic weighted kappa of 0.782, indicating substantial agreement when accounting for the ordinal nature of the certainty scale. [...] A new descriptive meta-research study published in BMC Medical Informatics and Decision Making evaluates the performance of the GPT-5 API in structurally interpreting ultrasound-related Cochrane reviews. The research, conducted by a team including Weizao Wu, Anchen Liu, and colleagues, aims to clarify the role of ultrasound within systematic reviews and assess the field-specific capabilities of large language models in evidence synthesis. By combining a two-level analysis of review topics with [...] To evaluate the GPT-5 API, the researchers employed a structured extraction process targeting four key variables: review purpose, clinical domain, evidence certainty, and conclusion polarity. Two independent clinicians annotated the focused subset of 54 reviews while blinded to the GPT-5 outputs. Disagreements between the human reviewers were resolved through consensus adjudication, creating a final operational reference standard against which the AI’s performance was measured.",
+                "score": 0.7216064
+              },
+              {
+                "title": "Study Finds Lower Unaided Scores After Brief Tasks With GPT-5 Access | TokenPost",
+                "url": "https://www.tokenpost.com/news/technology/52203",
+                "source": "tokenpost.com",
+                "summary": "Access to GPT-5 helped participants during short math and reading tasks, but groups offered the tool scored lower on unaided questions immediately afterward in three randomized experiments involving U.S.-based participants.\n\nThe experiments recruited 1,222 people: 354 for the first fraction test, 667 for the second and 201 for the reading test. After exclusions, the analyses included 305, 585 and 168 participants, respectively. [...] During sessions lasting about 10 to 15 minutes, GPT-5 was available beside the questions and could provide complete solutions. Scores improved while the assistant was available. Researchers removed access before the final three questions in each experiment, then measured how participants performed without it. [...] The second fraction experiment found a smaller accuracy gap. Participants previously offered GPT-5 answered 71% of the final questions correctly, compared with 77% for the control group. Skip rates were 10% and 7%, respectively, but that difference was not statistically significant in the full comparison.",
+                "score": 0.70726365
+              },
+              {
+                "title": "A 60-year-old Danish man says ChatGPT told him he could stop paying rent and that losing his home was ‘legally impossible’; after being evicted with his two dogs, he is now suing OpenAI in San Francisco - The Times of India",
+                "url": "https://timesofindia.indiatimes.com/world/us/a-60-year-old-danish-man-says-chatgpt-told-him-he-could-stop-paying-rent-and-that-losing-his-home-was-legally-impossible-after-being-evicted-with-his-two-dogs-he-is-now-suing-openai-in-san-francisco/articleshow/135714902.cms",
+                "source": "timesofindia.indiatimes.com",
+                "summary": "the dispute started when Elmfelt's landlord asked him to remove one of his two dogs from his apartment. Looking for advice on how to handle the situation, Elmfelt turned to OpenAI's chatbot. He spent more than 600 hours chatting with the AI models GPT-4o and GPT-5. During these conversations, the chatbot told Elmfelt that he had the legal right to stop paying rent while continuing to live in the apartment.",
+                "score": 0.52568597
+              },
+              {
+                "title": "Man claims ChatGPT told him to stop paying rent and got him evicted",
+                "url": "https://www.bostonherald.com/2026/11/07/man-claims-chatgpt-told-him-to-stop-paying-rent-and-got-him-evicted",
+                "source": "bostonherald.com",
+                "summary": "Over the more than 600 hours the 60-year-old Dane spent with OpenAI’s GPT-4o and GPT-5 chatbot versions, “ChatGPT positioned itself not as a software application but as his adviser, business partner, legal counsel, confidant and, above all, a friend Elmfelt could trust,” the lawsuit said.",
+                "score": 0.49758363
+              },
+              {
+                "title": "OpenAI's BioBasicsBench tests AI on everyday wet-lab data",
+                "url": "https://www.rdworldonline.com/openai-unveils-biobasicsbench-a-benchmark-to-gauge-how-well-ai-agents-read-raw-experimental-data-across-100-routine-wet-lab-tasks",
+                "source": "rdworldonline.com",
+                "summary": "In the scope of testing, OpenAI tested seven of its own models from two generations: GPT-5.2, GPT-5.4, GPT-5.5 and GPT-5.6 Sol from the GPT-5 line, and its more recent models GPT-6.1 Sol, GPT-6 Luna and GPT-6 Astra. GPT-5.6 introduced the Sol, Terra and Luna tier names, and GPT-6 added Astra, released in early September, as the top tier. Each model ran at several reasoning-effort settings, which control how much the model works through a problem before it answers. In all, OpenAI ran 37 [...] OpenAI’s chart plots mean BioBasicsBench score against average output tokens per task, on a log scale. Each point is a reasoning-effort setting. Solid blue lines show GPT-6 models; dashed orange lines show GPT-5 models. Source: OpenAI [...] In one cloning task, GPT-5.6 Sol based its conclusions on an empty negative control plate, the parallel sample that tells researchers whether something other than the intended procedure could produce a result. Astra read the handwritten “LB Kan50” label on the plate’s rim, saw that the plate contained kanamycin while the experiment used ampicillin, and rejected it as a valid control.",
+                "score": 0.43727133
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G10_correction_repo",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_new_tool_arg_correction",
+        "difficulty": "hard",
+        "new_tool": "github_repo",
+        "what_it_tests": "Áp dụng lời sửa repo (facebook/react → vercel/next.js) ở lượt cuối trên tool mới github_repo."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Cho mình thông tin repo facebook/react trên GitHub"
+        },
+        {
+          "role": "user",
+          "content": "À nhầm, cho mình repo vercel/next.js"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ repo đó thôi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "github_repo",
+            "args": {
+              "repo": "vercel/next.js"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "github_repo",
+            "args": {
+              "repo": "vercel/next.js"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "github_repo",
+          "args": {
+            "repo": "vercel/next.js"
+          },
+          "result": {
+            "tool": "github_repo",
+            "repo": "vercel/next.js",
+            "found": true,
+            "items": [
+              {
+                "title": "vercel/next.js",
+                "url": "https://github.com/vercel/next.js",
+                "source": "github.com",
+                "summary": "The React Framework",
+                "stars": 143452,
+                "forks": 32795,
+                "open_issues": 3922,
+                "language": "JavaScript",
+                "license": "MIT",
+                "topics": [
+                  "blog",
+                  "browser",
+                  "compiler",
+                  "components",
+                  "hybrid",
+                  "nextjs",
+                  "node",
+                  "react",
+                  "server-rendering",
+                  "ssg",
+                  "static",
+                  "static-site-generator",
+                  "universal",
+                  "vercel"
+                ],
+                "last_push": "2026-11-10T16:55:40Z",
+                "archived": false
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
